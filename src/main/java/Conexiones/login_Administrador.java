@@ -1,58 +1,53 @@
 package Conexiones;
 
-
 import java.sql.SQLException;
 import java.sql.Connection;
 
-public  class login_Administrador { //login del operador
-    public boolean autenticar(String correo, String contrasena) throws ClassNotFoundException {
-        boolean resultado = false;
-        boolean resultado2 = false;
-
-        String Rol = "Administrador";
+public class login_Administrador {
+    public String autenticar(String correo, String contrasena) throws ClassNotFoundException {
+        String rol = null;
 
         try (Connection connection = DB1Config.getconnection1(); Connection connection2 = DB2Config.getconnection2();) {
-
-            // valida conexiones
             if (connection != null) {
-                System.out.println("Conectado con exito...");
+                System.out.println("Conectado con éxito a la base de datos dbJT");
             } else {
-                System.out.println("Error al conectar...");
+                System.out.println("Error al conectar a la base de datos dbJT");
             }
 
             if (connection2 != null) {
-                System.out.println("Conectado con exito...");
+                System.out.println("Conectado con éxito a la base de datos dbGT");
             } else {
-                System.out.println("Error al conectar...");
+                System.out.println("Error al conectar a la base de datos dbGT");
             }
-            // login dbJutiapa
+
+            // Login dbJT
             java.sql.Statement statement = connection.createStatement();
-            String selectSql = "SELECT * FROM USUARIOS WHERE CORREO = '" + correo + "' AND CONTRASENA = '" + contrasena + "' AND RO = '" + Rol + "';";
+            String selectSql = "SELECT RO FROM USUARIOS WHERE CORREO = '" + correo + "' AND CONTRASENA = '" + contrasena + "' AND (RO = 'Operador' OR RO = 'Administrador');";
             java.sql.ResultSet resultSet = statement.executeQuery(selectSql);
 
             if (resultSet.next()) {
-                resultado = resultSet.getInt(1) > 0;
-                System.out.println("Bienvenido Administrador JT!!" + resultado);
+                rol = resultSet.getString("RO");
+                System.out.println("Bienvenido a dbJT! Rol: " + rol);
             } else {
-                System.out.println("No existe Rol en JT  o no es Rol Administrador");
+                System.out.println("No se encontró un usuario con el correo y contraseña proporcionados en dbJT.");
             }
 
-            // login dbGuatemala
+            // Login dbGT
             java.sql.Statement statement2 = connection2.createStatement();
-            String selectSql3 = "SELECT * FROM USUARIOS WHERE CORREO = '" + correo + "' AND CONTRASENA = '" + contrasena + "' AND RO = '" + Rol + "';";
-            java.sql.ResultSet resultSet2 = statement2.executeQuery(selectSql3);
+            String selectSql2 = "SELECT RO FROM USUARIOS WHERE CORREO = '" + correo + "' AND CONTRASENA = '" + contrasena + "' AND (RO = 'Operador' OR RO = 'Administrador');";
+            java.sql.ResultSet resultSet2 = statement2.executeQuery(selectSql2);
 
             if (resultSet2.next()) {
-                resultado2 = resultSet2.getInt(1) > 0;
-                System.out.println("Bienvenido Administrador GT!!" + resultado);
+                rol = resultSet2.getString("RO");
+                System.out.println("Bienvenido a dbGT! Rol: " + rol);
             } else {
-                System.out.println("No existe Rol en GT  o no es Rol Administrador");
+                System.out.println("No se encontró un usuario con el correo y contraseña proporcionados en dbGT.");
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al iniciar sesion : " + e.toString());
+            System.out.println("Error al iniciar sesión: " + e.toString());
         }
 
-        return resultado || resultado2;
+        return rol;
     }
 }

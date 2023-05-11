@@ -15,6 +15,7 @@ import Conexiones.login_Administrador;
 //import analisisSistemas.function.LoginOperador;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.microsoft.azure.functions.annotation.BindingName;
 import java.io.IOException;
 import java.util.Optional;
@@ -50,11 +51,15 @@ public class LoginAdministrador {
                     .body("La cadena de solicitud HTTP no cumple con el formato esperado")
                     .build();
         }
-
         login_Administrador loginOperador = new login_Administrador();
-        if (loginOperador.autenticar(correo, password)) {
+        String rol = loginOperador.autenticar(correo, password);
+        if (rol != null) {
+            ObjectNode responseJson = objectMapper.createObjectNode();
+            responseJson.put("correo", correo);
+            responseJson.put("rol", rol);
+    
             return request.createResponseBuilder(HttpStatus.OK)
-                    .body("Bienvenido Administrador " + correo)
+                    .body(responseJson.toString())
                     .build();
         } else {
             return request.createResponseBuilder(HttpStatus.UNAUTHORIZED)
