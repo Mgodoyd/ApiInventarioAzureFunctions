@@ -38,6 +38,6 @@ jobs:
         with:
           app-name: 'analisis-sistemas'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E7D271997256461CB3751A96B80CE7CC }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_125C15A76669480E9FB0E24B68AE1C3D }}
           package: '${{ env.PACKAGE_DIRECTORY }}'
           respect-pom-xml: true
