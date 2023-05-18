@@ -34,16 +34,21 @@ public class ChangeProductGt {
             resultSet = statement2.executeQuery(selectSql1);
             
             
-        if (resultSet.next()) {//si existe el id en la base de datos de Guatemala entonces almaceno esos valores y los aguardo en variables
-            System.out.println("Id" + " " + id + " " + "encontrado en la db:" + connection2);
-            
+            if (resultSet.next()) {//si existe el id en la base de datos de Guatemala entonces almaceno esos valores y los aguardo en variables
+              System.out.println("Id" + " " + id + " " + "encontrado en la db:" + connection2);
+              
+              int stock = resultSet.getInt("stock");
+              if (stock == 0) {
+                  System.out.println("No hay stock disponible");
+                  return false;
+              }
                 int productId = resultSet.getInt("id_producto");
                 int userId = resultSet.getInt("id_usuario");
                 int ubicacionId = resultSet.getInt("id_ubicacion");
                 String productName = resultSet.getString("nombbre");
                 int productPrice = resultSet.getInt("precio");
                 byte[] productImage = resultSet.getBytes("img");
-                int stock= resultSet.getInt("stock");
+                 stock= resultSet.getInt("stock");
                 int stock_minimo = resultSet.getInt("stock_minimo");
                 
             /* //seleccion si el id ya existe en la segunda base de datos para realizar el update correspondiente

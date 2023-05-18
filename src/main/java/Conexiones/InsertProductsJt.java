@@ -6,8 +6,36 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+
 public class InsertProductsJt {
-    public static boolean insert(String nombre, int precio, byte[] imagen, int stock_disponible, int stock_minimo_requerido) throws ClassNotFoundException {
+
+    public static boolean exists(String nombre) throws ClassNotFoundException {
+        try (Connection connection = DB1Config.getconnection1()) {
+            // Verifica las conexiones
+            if (connection != null) {
+                System.out.println("Conectado con éxito...");
+            } else {
+                System.out.println("Error al conectar...");
+            }
+    
+            // Consulta la tabla productos buscando el nombre
+            String query = "SELECT COUNT(*) FROM dbo.productos WHERE nombbre = ?";
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, nombre);
+            ResultSet rs = pstmt.executeQuery();
+            int count = 0;
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+    
+            return count > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al buscar el producto: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public static boolean insert(String nombre, int precio, byte[] image, int stock_disponible, int stock_minimo_requerido) throws ClassNotFoundException {
         try(Connection connection = DB1Config.getconnection1()) {
             // Verifica las conexiones
             if(connection != null) {
@@ -34,7 +62,7 @@ public class InsertProductsJt {
                pstmt.setInt(3, 1);
                pstmt.setString(4, nombre);
                pstmt.setInt(5, precio);
-               pstmt.setBytes(6, imagen);
+               pstmt.setBytes(6, image);
                pstmt.setInt(7, stock_disponible);
                pstmt.setInt(8, stock_minimo_requerido);
                int rowsInserted = pstmt.executeUpdate();

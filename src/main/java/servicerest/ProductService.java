@@ -10,6 +10,7 @@ import Entitys.Product1;
 import Entitys.Productgt;
 import Entitys.Productjt;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -31,13 +32,13 @@ public class ProductService {
     }
     
     // para obtener la listas de los 2 almacenes
-    public List<Product> getAll() throws ClassNotFoundException {
+    public List<Product> getAll() throws ClassNotFoundException, IOException {
        
             return productdao.getAll();
              
     }
     
-     public List<Product1> getAll1() throws ClassNotFoundException {
+     public List<Product1> getAll1() throws ClassNotFoundException, IOException {
        
             return productdao1.getAll();
     }
@@ -56,7 +57,7 @@ public class ProductService {
         return (Product) productdao.get(product.getId_producto(),product.getId_usuario(),product.getId_ubicacion(),product.getNombre(),product.getPrecio(),product.getImg(),product.getStock(),product.getStock_minimo());
     }
     
-    public Product get(Product1 product){
+   public Product get(Product1 product){
         return (Product) productdao.get(product.getId_producto(),product.getId_usuario(),product.getId_ubicacion(),product.getNombre(),product.getPrecio(),product.getImg(),product.getStock(),product.getStock_minimo());
     }
     

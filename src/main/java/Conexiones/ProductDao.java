@@ -3,15 +3,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import Entitys.*;
-import org.apache.commons.lang3.ArrayUtils;
-
+ 
 public class ProductDao  {//obtiene la lista de productos de Guatemala
     
-    public List<Product> getAll() throws ClassNotFoundException{
+    public List<Product> getAll() throws ClassNotFoundException, IOException{
         List<Product> products = new ArrayList<Product>();
        
         ResultSet resultSet = null;
@@ -25,7 +27,7 @@ public class ProductDao  {//obtiene la lista de productos de Guatemala
              }
              
              
-            java.sql.Statement statement =  connection.createStatement();
+            java.sql.Statement statement =  connection.createStatement(); 
             
             String selectSql = "SELECT * from dbo.PRODUCTOS;";
             resultSet = statement.executeQuery(selectSql);
@@ -39,9 +41,20 @@ public class ProductDao  {//obtiene la lista de productos de Guatemala
                 pd.setId_ubicacion(resultSet.getInt("id_ubicacion"));
                 pd.setNombre(resultSet.getString("nombbre"));
                 pd.setPrecio(resultSet.getInt("precio"));
-                byte[] imgBytes = resultSet.getBytes("img");
-                Byte[] img = ArrayUtils.toObject(imgBytes);
-                pd.setImg(img);
+               // pd.setImg( resultSet.getString("img"));
+             // Obtener los datos binarios de la columna 'img' como un flujo de entrada (InputStream)
+                InputStream binaryStream = resultSet.getBinaryStream("img");
+                
+                // Leer los datos binarios del flujo de entrada y almacenarlos en un arreglo de bytes
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                int bytesRead;
+                byte[] data = new byte[4096];
+                while ((bytesRead = binaryStream.read(data, 0, data.length)) != -1) {
+                    buffer.write(data, 0, bytesRead);
+                }
+                byte[] imageData = buffer.toByteArray();
+                
+                pd.setImg(imageData);
                 pd.setStock(resultSet.getInt("stock"));
                 pd.setStock_minimo(resultSet.getInt("stock_minimo"));
                 products.add(pd);
@@ -56,7 +69,9 @@ public class ProductDao  {//obtiene la lista de productos de Guatemala
          
     }
 
-    public Product get(int id, int precio, int id_ubicacion, String name, int precio1, Byte[] img1, int stock, int stock_minimo) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+    public Product get(int id_producto, int id_usuario, int id_ubicacion, String nombre, int precio, byte[] img,
+            int stock, int stock_minimo) {
+        return null;
     }
 }

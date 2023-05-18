@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang3.ArrayUtils;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 public class ProductDao1 { //obtiene los productos de Jutiapa
                                   
-    public List<Product1> getAll() throws ClassNotFoundException{
+    public List<Product1> getAll() throws ClassNotFoundException, IOException{
       List<Product1> products2 = new ArrayList<Product1>();
       
       ResultSet resultSet = null;
@@ -38,9 +40,20 @@ public class ProductDao1 { //obtiene los productos de Jutiapa
                 pd.setId_ubicacion(resultSet.getInt("id_ubicacion"));
                 pd.setNombre(resultSet.getString("nombbre"));
                 pd.setPrecio(resultSet.getInt("precio"));
-                byte[] imgBytes = resultSet.getBytes("img");
-                Byte[] img = ArrayUtils.toObject(imgBytes);
-                pd.setImg(img);
+              // pd.setImg( resultSet.getString("img"));
+             // Obtener los datos binarios de la columna 'img' como un flujo de entrada (InputStream)
+             InputStream binaryStream = resultSet.getBinaryStream("img");
+                
+             // Leer los datos binarios del flujo de entrada y almacenarlos en un arreglo de bytes
+             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+             int bytesRead;
+             byte[] data = new byte[4096];
+             while ((bytesRead = binaryStream.read(data, 0, data.length)) != -1) {
+                 buffer.write(data, 0, bytesRead);
+             }
+             byte[] imageData = buffer.toByteArray();
+             
+             pd.setImg(imageData);
                 pd.setStock(resultSet.getInt("stock"));
                 pd.setStock_minimo(resultSet.getInt("stock_minimo"));
                 products2.add(pd);

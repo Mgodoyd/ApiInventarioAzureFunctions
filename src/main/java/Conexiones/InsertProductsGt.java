@@ -5,9 +5,35 @@ import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
+ 
 public class InsertProductsGt {
-    public static boolean insert(String nombre_, int precio_, byte[] imagen_, int stock_disponible_, int stock_minimo_requerido_)  throws ClassNotFoundException {
+    public static boolean exists(String nombre) throws ClassNotFoundException {
+        try (Connection connection = DB2Config.getconnection2()) {
+            // Verifica las conexiones
+            if (connection != null) {
+                System.out.println("Conectado con éxito...");
+            } else {
+                System.out.println("Error al conectar...");
+            }
+    
+            // Consulta la tabla productos buscando el nombre
+            String query = "SELECT COUNT(*) FROM dbo.productos WHERE nombbre = ?";
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, nombre);
+            ResultSet rs = pstmt.executeQuery();
+            int count = 0;
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+    
+            return count > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al buscar el producto: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public static boolean insert(String nombre_, int precio_, byte[] imagen, int stock_disponible_, int stock_minimo_requerido_)  throws ClassNotFoundException {
         try(Connection connection = DB2Config.getconnection2()) {
             // Verifica las conexiones
             if(connection != null) {
@@ -15,7 +41,7 @@ public class InsertProductsGt {
             } else {
                 System.out.println("Error al conectar...");
             }
-   
+    
             // Obtiene el valor máximo del ID_PRODUCTO de la tabla
             String query = "SELECT MAX(id_producto) FROM dbo.productos";
             Statement stmt = connection.createStatement();
@@ -34,7 +60,7 @@ public class InsertProductsGt {
                pstmt.setInt(3, 2);
                pstmt.setString(4, nombre_);
                pstmt.setInt(5, precio_);
-               pstmt.setBytes(6, imagen_);
+               pstmt.setBytes(6, imagen);
                pstmt.setInt(7, stock_disponible_);
                pstmt.setInt(8, stock_minimo_requerido_);
                int rowsInserted = pstmt.executeUpdate();

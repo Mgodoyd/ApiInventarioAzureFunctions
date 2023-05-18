@@ -6,14 +6,14 @@ public class Product1 {
     private int id_ubicacion;
     private String nombre;
     private int precio;
-    private Byte[] img;
+    private byte[] img;
     private int stock;
     private int stock_minimo;
 
     public Product1() {
     }
 
-    public Product1(int id_producto, int id_usuario, int id_ubicacion, String nombre, int precio, Byte[] img, int stock, int stock_minimo) {
+    public Product1(int id_producto, int id_usuario, int id_ubicacion, String nombre, int precio, byte[] img, int stock, int stock_minimo) {
         this.id_producto = id_producto;
         this.id_usuario = id_usuario;
         this.id_ubicacion = id_ubicacion;
@@ -64,11 +64,11 @@ public class Product1 {
         this.precio = precio;
     }
 
-    public Byte[] getImg() {
+    public byte[] getImg() {
         return img;
     }
 
-    public void setImg(Byte[] img) {
+    public void setImg(byte[] img) {
         this.img = img;
     }
 

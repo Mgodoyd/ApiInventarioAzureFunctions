@@ -10,7 +10,7 @@ import servicerest.*;
 /**
  * Azure Functions with HTTP Trigger.
  */
-public class GetProductsGt {
+public class GetProductsGt { 
     /**
      * This function listens at endpoint "/api/GetProductsGt". Two ways to invoke it using "curl" command in bash:
      * 1. curl -d "HTTP Body" {your host}/api/GetProductsGt
@@ -26,7 +26,7 @@ public class GetProductsGt {
 
     try {
         List<Product> products = new ProductService().getAll();
-
+ 
         Gson gson = new Gson();
         String jsonString = gson.toJson(products);
         return request.createResponseBuilder(HttpStatus.OK).body(jsonString).build();

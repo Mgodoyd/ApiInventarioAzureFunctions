@@ -1,34 +1,23 @@
 package InsertGT.function;
 
-
 import java.io.IOException;
-import com.microsoft.azure.functions.annotation.*;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.microsoft.azure.functions.annotation.*;
+
+import Conexiones.InsertProductsGt;
+import Conexiones.InsertProductsJt;
+
 import com.microsoft.azure.functions.*;
-import Conexiones.*;
 import java.util.logging.LogRecord;
 
 import java.util.logging.Level;
 
 
-
-
-
-/* 
-import org.glassfish.jersey.media.multipart.FormDataParam;/
-
-
-
-/**
- * Azure Functions with HTTP Trigger.
- */
 public class InsertProductGt {
-    /**
-     * This function listens at endpoint "/api/InsertProductGt". Two ways to invoke it using "curl" command in bash:
-     * 1. curl -d "HTTP Body" {your host}/api/InsertProductGt
-     * 2. curl {your host}/api/InsertProductGt?name=HTTP%20Query
-     */  
+
     @FunctionName("InsertProductGt")
     public HttpResponseMessage run(
         @HttpTrigger(
@@ -72,7 +61,7 @@ public class InsertProductGt {
                 stock_minimo = rootNode.get("STOCK_MINIMO").asInt();
             }
             
-            System.out.println(requestBody);
+           // System.out.println(requestBody);
         } catch (IOException e) {
             e.printStackTrace();
             String errorMessage = "Error al procesar la solicitud: " + e.getMessage();
@@ -81,11 +70,29 @@ public class InsertProductGt {
                 .body(errorMessage)
                 .build();
         }
+
+        // Validar si el producto ya existe
+        try {
+            boolean exists = InsertProductsGt.exists(nombre);
+            if (exists) {
+                return request.createResponseBuilder(HttpStatus.CONFLICT)
+                    .body("El producto ya existe")
+                    .build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMessage = "Error al buscar el producto: " + e.getMessage();
+            context.getLogger().log(new LogRecord(Level.SEVERE, errorMessage));
+            return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(errorMessage)
+                .build();
+        }
+
     
         // Realizar la inserción
         try {
             boolean isInserted = InsertProductsGt.insert(nombre, precio, imagen, stock, stock_minimo);
-    
+
             // Devolver la respuesta
             if (isInserted) {
                 return request.createResponseBuilder(HttpStatus.OK)
@@ -105,7 +112,5 @@ public class InsertProductGt {
                 .build();
         }
     }
-    
-                
-                    
+
 }

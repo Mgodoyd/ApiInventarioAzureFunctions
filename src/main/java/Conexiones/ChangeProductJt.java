@@ -36,6 +36,11 @@ public class ChangeProductJt {
          
          if (resultSet.next()) { //si existe el id en la base de datos de Jutiapa entonces almaceno esos valores y los aguardo en variables
              System.out.println("Id" + " " + id + " " + "encontrado en la db:" + connection);
+             int stock = resultSet.getInt("stock");
+             if (stock == 0) {
+                 System.out.println("No hay stock disponible");
+                 return false;
+             }
              
                  int productId = resultSet.getInt("id_producto");
                  int userId = resultSet.getInt("id_usuario");
@@ -43,7 +48,7 @@ public class ChangeProductJt {
                  String productName = resultSet.getString("nombbre");
                  int productPrice = resultSet.getInt("precio");
                  byte[] productImage = resultSet.getBytes("img");
-                 int stock= resultSet.getInt("stock");
+                  stock= resultSet.getInt("stock");
                  int stock_minimo = resultSet.getInt("stock_minimo");
             
               // Consultar la base de datos 2 para ver si el producto con el mismo nombre existe
