@@ -5,12 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class ChangeProductGt {
-    public boolean ChangeProductById(int id) throws ClassNotFoundException, SQLException {
+    public boolean ChangeProductById(int id , int stockresto) throws ClassNotFoundException, SQLException {
        
           
         ResultSet resultSet= null;
@@ -26,67 +25,71 @@ public class ChangeProductGt {
               if(connection2 !=null){
                System.out.println("Conectado con exito 2...");   
               }else{
-               System.out.println("Error al conectar 2...");   
+               System.out.println("Error al conectar 2...");    
               }
-            //obtiene el id de la base de datos de Guatemala
-            String selectSql1 = "SELECT * from dbo.PRODUCTOS WHERE ID_PRODUCTO="+ id + ";";
-            java.sql.Statement statement2 =  connection2.createStatement();
-            resultSet = statement2.executeQuery(selectSql1);
-            
-            
-            if (resultSet.next()) {//si existe el id en la base de datos de Guatemala entonces almaceno esos valores y los aguardo en variables
-              System.out.println("Id" + " " + id + " " + "encontrado en la db:" + connection2);
-              
-              int stock = resultSet.getInt("stock");
-              if (stock == 0) {
-                  System.out.println("No hay stock disponible");
-                  return false;
-              }
-                int productId = resultSet.getInt("id_producto");
-                int userId = resultSet.getInt("id_usuario");
-                int ubicacionId = resultSet.getInt("id_ubicacion");
-                String productName = resultSet.getString("nombbre");
-                int productPrice = resultSet.getInt("precio");
-                byte[] productImage = resultSet.getBytes("img");
-                 stock= resultSet.getInt("stock");
-                int stock_minimo = resultSet.getInt("stock_minimo");
-                
-            /* //seleccion si el id ya existe en la segunda base de datos para realizar el update correspondiente
-             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM dbo.PRODUCTOS WHERE ID_PRODUCTO =" + id + ";");
-             ResultSet resultSet2 = pstmt.executeQuery();*/
-             
-              PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM dbo.PRODUCTOS WHERE NOMBBRE=?");
-              pstmt.setString(1, productName);
-              ResultSet resultSet2 = pstmt.executeQuery();
-
+           // Obtiene el id de la base de datos de Guatemala
+    String selectSql1 = "SELECT * FROM dbo.PRODUCTOS WHERE ID_PRODUCTO=" + id + ";";
+    Statement statement2 = connection2.createStatement();
+    resultSet = statement2.executeQuery(selectSql1);
+    
+    if (resultSet.next()) {
+        System.out.println("Id " + id + " encontrado en la base de datos: " + connection2);
+        
+        int stock = resultSet.getInt("stock");
+        if (stock == 0) {
+            System.out.println("No hay stock disponible");
+            return false;
+        }
+        
+        int productId = resultSet.getInt("id_producto");
+        int userId = resultSet.getInt("id_usuario");
+        int ubicacionId = resultSet.getInt("id_ubicacion");
+        String productName = resultSet.getString("nombbre");
+        int productPrice = resultSet.getInt("precio");
+        
+        // Obtiene el valor Base64 de la imagen
+      //  String cleanedBase64 = base64Image.replaceAll("^data:image/[a-zA-Z]+;base64,", "").trim();
+        byte[] base64ImageBytes = resultSet.getBytes("img");
+        
+        stock = resultSet.getInt("stock");
+        int stock_minimo = resultSet.getInt("stock_minimo");
+        
+        // Verifica si el producto ya existe en la segunda base de datos
+        PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM dbo.PRODUCTOS WHERE NOMBBRE=?");
+        pstmt.setString(1, productName);
+        ResultSet resultSet2 = pstmt.executeQuery();
+        
         if (resultSet2.next()) {
-           // El producto ya existe en la segunda base de datos, actualizar su stock
-             pstmt = connection.prepareStatement("UPDATE dbo.PRODUCTOS SET STOCK = STOCK + 1 WHERE NOMBBRE = ?;");
-               pstmt.setString(1,productName);
-               System.out.println("Stock agregado correctamente en la db2");
+            // El producto ya existe en la segunda base de datos, actualizar su stock
+            pstmt = connection.prepareStatement("UPDATE dbo.PRODUCTOS SET STOCK = STOCK + " + stockresto +  " WHERE NOMBBRE = ?");
+            pstmt.setString(1, productName);
+            System.out.println("Stock agregado correctamente en la db2");
         } else {
-         // El producto no existe en la base de datos 2, insertar un nuevo registro
-                pstmt = connection.prepareStatement("INSERT INTO dbo.PRODUCTOS(ID_PRODUCTO,ID_USUARIO,ID_UBICACION,NOMBBRE,PRECIO,IMG,STOCK,STOCK_MINIMO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-
-                // Obtener el último ID_PRODUCTO insertado en la base de datos 2 y agregarle 1 para obtener el siguiente ID
-                Statement stmt = connection.createStatement();
-                ResultSet resultSet3 = stmt.executeQuery("SELECT TOP 1 ID_PRODUCTO FROM dbo.PRODUCTOS ORDER BY ID_PRODUCTO DESC");
-
-                int nextId = 1;
-                if (resultSet3.next()) {
-                    nextId = resultSet3.getInt("ID_PRODUCTO") + 1;
-                }
-
-                pstmt.setInt(1, nextId);
-                pstmt.setInt(2, userId);
-                pstmt.setInt(3, 1);
-                pstmt.setString(4, productName);
-                pstmt.setInt(5, productPrice);
-                pstmt.setBytes(6, productImage);
-                pstmt.setInt(7, 1 );
-                pstmt.setInt(8, stock_minimo);
-                System.out.println("Producto insertado correctamente en la db2");
+            // El producto no existe en la base de datos 2, insertar un nuevo registro
+            pstmt = connection.prepareStatement("INSERT INTO dbo.PRODUCTOS(ID_PRODUCTO,ID_USUARIO,ID_UBICACION,NOMBBRE,PRECIO,IMG,STOCK,STOCK_MINIMO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            
+            // Obtener el último ID_PRODUCTO insertado en la base de datos 2 y agregarle 1 para obtener el siguiente ID
+            Statement stmt = connection.createStatement();
+            ResultSet resultSet3 = stmt.executeQuery("SELECT TOP 1 ID_PRODUCTO FROM dbo.PRODUCTOS ORDER BY ID_PRODUCTO DESC");
+            
+            int nextId = 1;
+            if (resultSet3.next()) {
+                nextId = resultSet3.getInt("ID_PRODUCTO") + 1;
             }
+            
+            pstmt.setInt(1, nextId);
+            pstmt.setInt(2, userId);
+            pstmt.setInt(3, 1);
+            pstmt.setString(4, productName);
+            pstmt.setInt(5, productPrice);
+            
+            pstmt.setBytes(6, base64ImageBytes);
+
+
+            pstmt.setInt(7, stockresto);
+            pstmt.setInt(8, stock_minimo);
+            System.out.println("Producto insertado correctamente en la db2");
+        }
              //inserta o actualiza los datos en la segunda base de datos
              int rowsInsert = pstmt.executeUpdate();
 
@@ -124,7 +127,7 @@ public class ChangeProductGt {
             System.out.println("Nuevo registro insertado en la tabla de movimientos con ID " + idMovimiento);
             
              // Actualizar el stock del producto
-            String updateSql = "UPDATE PRODUCTOS SET STOCK = STOCK - 1 WHERE ID_PRODUCTO =" + id + ";";
+            String updateSql = "UPDATE PRODUCTOS SET STOCK = STOCK - " + stockresto + " WHERE ID_PRODUCTO =" + id + ";";
             PreparedStatement updateStmt = connection2.prepareStatement(updateSql);
              //updateStmt.setInt(1, productId);
             int rowsUpdated = updateStmt.executeUpdate();
@@ -144,7 +147,7 @@ public class ChangeProductGt {
 }
    }
      }catch (SQLException e) {
-            Logger.getLogger(ProductDao.class.getName()).log(Level.SEVERE,null, e.toString());
+            Logger.getLogger(ProductDao.class.getName()).log(null, e.toString());
      }
          return true;
 }

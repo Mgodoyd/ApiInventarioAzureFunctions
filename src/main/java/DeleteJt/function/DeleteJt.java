@@ -25,7 +25,7 @@ public class DeleteJt {
         if(isDeleted){
             return request.createResponseBuilder(HttpStatus.OK).body("Producto Eliminado correctamente").build();
         }else{
-            return request.createResponseBuilder(HttpStatus.OK).body("No Existe Id para eliminar el producto" + "  " + id).build();
+            return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR).body("No Existe Id para eliminar el producto" + "  " + id).build();
         }
     } catch (Exception e) {
         e.printStackTrace();

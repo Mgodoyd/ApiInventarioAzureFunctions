@@ -10,7 +10,7 @@ import java.sql.Statement;
 
 
 public class ChangeProductJt {
-    public boolean ChangeProductById(int id) throws ClassNotFoundException, SQLException {
+    public boolean ChangeProductById(int id, int stokresto) throws ClassNotFoundException, SQLException {
        
           
         ResultSet resultSet= null;
@@ -47,7 +47,7 @@ public class ChangeProductJt {
                  int ubicacionId = resultSet.getInt("id_ubicacion");
                  String productName = resultSet.getString("nombbre");
                  int productPrice = resultSet.getInt("precio");
-                 byte[] productImage = resultSet.getBytes("img");
+                 byte[] base64ImageBytes = resultSet.getBytes("img");
                   stock= resultSet.getInt("stock");
                  int stock_minimo = resultSet.getInt("stock_minimo");
             
@@ -58,7 +58,7 @@ public class ChangeProductJt {
  
           if (resultSet2.next()) {
              // El producto ya existe en la segunda base de datos, actualizar su stock
-                pstmt = connection2.prepareStatement("UPDATE dbo.PRODUCTOS SET STOCK = STOCK + 1 WHERE NOMBBRE = ?;");
+                pstmt = connection2.prepareStatement("UPDATE dbo.PRODUCTOS SET STOCK = STOCK + " + stokresto + " WHERE NOMBBRE = ?;");
                 pstmt.setString(1,productName);
                 System.out.println("Stock agregado correctamente en la db2");
          } else {
@@ -79,8 +79,8 @@ public class ChangeProductJt {
                  pstmt.setInt(3, 2);
                  pstmt.setString(4, productName);
                  pstmt.setInt(5, productPrice);
-                 pstmt.setBytes(6, productImage);
-                 pstmt.setInt(7, 1 );
+                 pstmt.setBytes(6, base64ImageBytes);
+                 pstmt.setInt(7, stokresto );
                  pstmt.setInt(8, stock_minimo);
                  System.out.println("Producto insertado correctamente en la db2");
              }
@@ -120,7 +120,7 @@ public class ChangeProductJt {
              System.out.println("Nuevo registro insertado en la tabla de movimientos con ID " + idMovimiento);
  
              // Actualizar el stock del producto
-             String updateSql = "UPDATE PRODUCTOS SET STOCK = STOCK - 1 WHERE ID_PRODUCTO =" + productId + ";";
+             String updateSql = "UPDATE PRODUCTOS SET STOCK = STOCK - " + stokresto + " WHERE ID_PRODUCTO =" + productId + ";";
              PreparedStatement updateStmt = connection.prepareStatement(updateSql);
  
              int rowsUpdated = updateStmt.executeUpdate();

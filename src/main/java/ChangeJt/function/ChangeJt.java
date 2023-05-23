@@ -18,12 +18,13 @@ public class ChangeJt {
     public HttpResponseMessage run(
         @HttpTrigger(name = "req", methods = { HttpMethod.DELETE }, route = "jtdel/{id}", authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
         @BindingName("id") int id,
+        @BindingName("stockresto") int stockresto,
         final ExecutionContext context) {
         
         context.getLogger().info("Java HTTP trigger processed a request for ID: " + id);
 
         try {
-            boolean isDeleted = new ChangeProductJt().ChangeProductById(id);
+            boolean isDeleted = new ChangeProductJt().ChangeProductById(id,stockresto);
             if (isDeleted) {
                 return request.createResponseBuilder(HttpStatus.OK).body("Stock actualizado").build();
             } else {
