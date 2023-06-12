@@ -3,6 +3,7 @@ package Conexiones;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Base64;
 
 public class UpdateProductsJt {
     public static boolean update(int id,String nombre, int precio, byte[] imagen, int stock_disponible, int stock_minimo_requerido) throws ClassNotFoundException{
@@ -21,7 +22,9 @@ public class UpdateProductsJt {
          updateStatement.setInt(2, 1);
          updateStatement.setString(3, nombre);
          updateStatement.setInt(4, precio);
-         updateStatement.setBytes(5, imagen);
+         byte[] imagenBytes = Base64.getDecoder().decode(imagen);
+
+         updateStatement.setBytes(5, imagenBytes);
          updateStatement.setInt(6, stock_disponible);
          updateStatement.setInt(7, stock_minimo_requerido);
          updateStatement.setInt(8, id);

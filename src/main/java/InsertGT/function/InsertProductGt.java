@@ -4,16 +4,14 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.microsoft.azure.functions.annotation.*;
 
 import Conexiones.InsertProductsGt;
-import Conexiones.InsertProductsJt;
 
 import com.microsoft.azure.functions.*;
 import java.util.logging.LogRecord;
 
-import java.util.logging.Level;
+import java.util.logging.Level; 
 
 
 public class InsertProductGt {

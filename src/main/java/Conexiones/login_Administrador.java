@@ -50,4 +50,4 @@ public class login_Administrador {
 
         return rol;
     }
-}
+} 

@@ -58,7 +58,7 @@ public class LoginAdministrador {
             responseJson.put("correo", correo);
             responseJson.put("rol", rol);
     
-            return request.createResponseBuilder(HttpStatus.OK)
+            return request.createResponseBuilder(HttpStatus.OK) //200
                     .body(responseJson.toString())
                     .build();
         } else {

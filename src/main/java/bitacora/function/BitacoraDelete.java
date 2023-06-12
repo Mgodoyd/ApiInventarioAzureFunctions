@@ -20,9 +20,9 @@ public class BitacoraDelete {
      * 1. curl -d "HTTP Body" {your host}/api/BitacoraDelete
      * 2. curl {your host}/api/BitacoraDelete?name=HTTP%20Query
      */
-    @FunctionName("BitacoraDelete")
+    @FunctionName("BitacoraDelete") //nombre de la funcion
     public HttpResponseMessage run(
-        @HttpTrigger(name = "req", methods = {HttpMethod.GET}, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
+        @HttpTrigger(name = "req", methods = {HttpMethod.GET}, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,//metodo http y nivel de autorizacion anonimo para que cualquiera pueda acceder
         final ExecutionContext context) {
 
     context.getLogger().info("Java HTTP trigger processed a request.");
@@ -32,8 +32,8 @@ public class BitacoraDelete {
     String json2 = null;
 
     try {
-        List<BitacoraAll> products = new ProductService().getAll4();
-        List<BitacoraJtAll> products2 = new ProductService().getAll5();
+        List<BitacoraAll> products = new ProductService().getAll4(); //obtiene todos los registros de la tabla
+        List<BitacoraJtAll> products2 = new ProductService().getAll5(); //obtiene todos los registros de la tabla
         Contenedor2 conten = new Contenedor2(products,products2);
         Gson gson = new Gson();
         String jsonString = gson.toJson(conten);

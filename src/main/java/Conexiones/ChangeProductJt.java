@@ -109,7 +109,7 @@ public class ChangeProductJt {
          insertStmt.setInt(2, productId);
          insertStmt.setInt(3, 1);
          insertStmt.setInt(4, 1);
-         insertStmt.setInt(5, 1);
+         insertStmt.setInt(5, stokresto);
          insertStmt.setString(6, "JUTIAPA");
          insertStmt.setString(7, "GUATEMALA");
  

@@ -65,7 +65,7 @@ public class ProductDao1 { //obtiene los productos de Jutiapa
             Logger.getLogger(ProductDao.class.getName()).log(Level.SEVERE,null, e.toString());
         }
         return products2;
-}
+} 
 
  /*public Product get(Product product){
         return (Product) productdao1.get(product.getId(),product.getName(),product.getPrecio(),product.getImg());
